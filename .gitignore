@@ -1,0 +1,10 @@
+vectordb 
+models
+evadb_data
+.chroma
+.python-version
+SQL_methods_langchain.ipynb
+mnist.mp4
+.DS_Store
+*/.DS_Store
+optimised_transformers.ipynb
