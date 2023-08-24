@@ -2,6 +2,7 @@
 ![topic](images/QA_retriever_pipeline.png)
 We will cover series of generative ai tasks which include but not limited to:
 - Retrieval-Augmented Generation (RAG)
+- LLM Page Summarization
 - Retrieval-based Chatbots
 - so on...
 
@@ -19,13 +20,17 @@ To be able to do this, we need an open source language model, a vector database 
 
 Click [here](Retrieval_Augmented_Generation_with_LLM.ipynb) for more.
 </details>
-
 <details>
 <summary markdown="span"><h3>Retrieval Augmented Generation with LLM Part 2</h3></summary>
-
 Instead of using a pre-trained T5 model, we will use gpt4all models.
 
 Click [here](Retrieval_Augmented_Generation_with_LLM_part_2.ipynb) for more.
+</details>
+<details>
+<summary markdown="span"><h3>LLM Page Summarization</h3></summary>
+To summarize a page, we will use a GPT4All as LLM.    
+
+For more, click [here](page_summarization/README.md)
 </details>
 
 ## Hi, I'm Ade! 👋

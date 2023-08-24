@@ -1,0 +1,4 @@
+angchain>=0.0.271
+requests>=2.31.0
+bs4>=0.0.1
+gpt4all>=1.0.8
