@@ -18,19 +18,25 @@ To be able to do this, we need an open source language model, a vector database 
 * ChromaDB as vector database 
 * Langchain as application tools.
 
-Click [here](Retrieval_Augmented_Generation_with_LLM.ipynb) for more.
+Click [here](notebooks/1_Retrieval_Augmented_Generation_with_LLM.ipynb) for more.
 </details>
 <details>
 <summary markdown="span"><h3>Retrieval Augmented Generation with LLM Part 2</h3></summary>
 Instead of using a pre-trained T5 model, we will use gpt4all models.
 
-Click [here](Retrieval_Augmented_Generation_with_LLM_part_2.ipynb) for more.
+Click [here](notebooks/2_Retrieval_Augmented_Generation_with_LLM_part_2.ipynb) for more.
 </details>
 <details>
 <summary markdown="span"><h3>LLM Page Summarization</h3></summary>
 To summarize a page, we will use a GPT4All as LLM.    
 
 For more, click [here](page_summarization/README.md)
+</details>
+<details>
+<summary markdown="span"><h3>Creating a simple chatbot with open-source LLMs using Python and Hugging Face</h3></summary>
+Simple but functional Chatbot.
+
+Click [here](notebooks/3_Chatbot_with_LLM.ipynb) for more.
 </details>
 
 ## Hi, I'm Ade! 👋

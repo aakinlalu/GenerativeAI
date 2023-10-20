@@ -13,3 +13,8 @@ pdf2image>=1.16.3
 unsrtuctured[local-inference]>=0.10.5
 gpt4all>=1.0.8
 pygpt4all>=1.1.0
+timm>=0.9.7
+diffusers>=0.20.2
+espnet        
+espnet-tts-frontend>=0.0.3
+ctransformers>=0.2.27
