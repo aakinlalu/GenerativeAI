@@ -8,3 +8,12 @@ mnist.mp4
 .DS_Store
 */.DS_Store
 optimised_transformers.ipynb
+using_deep_eval.ipynb
+vector_database
+.env
+__pycache__
+.deepeval
+.hypothesis
+.pytest_cache 
+.hintrc
+.vscode
