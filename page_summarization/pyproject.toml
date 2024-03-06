@@ -7,7 +7,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10.12"
-langchain = "^0.1.0"
+langchain = "^0.1.11"
 requests = "^2.31.0"
 bs4 = "^0.0.1"
 gpt4all = "^1.0.8"
