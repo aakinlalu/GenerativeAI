@@ -30,7 +30,6 @@ def get_mistral():
         "models/mistral",
         config=conf,
         model_type="mistral",
-        config=conf
     )
     return llm
 
