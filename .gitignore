@@ -16,9 +16,6 @@ __pycache__
 .hypothesis
 .pytest_cache 
 .hintrc
-<<<<<<< HEAD
-.vscode
-=======
 .vscode
 Chinook.db
->>>>>>> c104dbc5914d66cd663c11322c03f17169302329
+node_modules
