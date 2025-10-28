@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Space Invaders (plain JS)</title>
+<style>
+  body { margin:0; overflow:hidden; background:#000; }
+  canvas { display:block; background:#000; }
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<script>
+/* ------------------------------------------------------------------
+   Space Invaders – vanilla JS + Canvas
+   ------------------------------------------------------------------ */
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+
+// canvas size
+const COLS = 15;                 // number of columns in the grid
+const ROWS = 10;                 // number of rows in the grid
+const BLOCK_SIZE = 30;           // pixel size of one block
+canvas.width  = COLS * BLOCK_SIZE;
+canvas.height = ROWS * BLOCK_SIZE;
+
+// --- game state ----------------------------------------------------
+const state = {
+  player: { x: COLS/2, y: ROWS-1, width:1, height:1, color:'white', speed:1, bullets:[] },
+  aliens: [],   // will be an array of alien objects
+  alienMoveDir: 1,  // 1 = right, -1 = left
+  alienSpeed: 0.2,
+  alienMoveTimer: 0,
+  alienMoveInterval: 800,   // ms per move
+  score: 0,
+  lives: 3,
+  keys: {}
+};
+
+// initialise aliens
+function initAliens() {
+  const rows = 3;          // how many rows of aliens
+  const cols = 10;         // how many aliens per row
+  const startX = 2;        // left offset
+  const startY = 1;        // top offset
+  const spacing = 1;       // blocks between aliens
+
+  for (let r=0; r<rows; r++) {
+    for (let c=0; c<cols; c++) {
+      const alien = {
+        x: startX + c*(spacing+1),
+        y: startY + r*(spacing+1),
+        width:1,
+        height:1,
+        color: 'lime',
+        alive:true
+      };
+      state.aliens.push(alien);
+    }
+  }
+}
+
+// --- keyboard handling ---------------------------------------------
+window.addEventListener('keydown', e => {
+  state.keys[e.key] = true;
+});
+window.addEventListener('keyup', e => {
+  state.keys[e.key] = false;
+});
+
+// --- game loop -----------------------------------------------------
+let lastTime = 0;
+function loop(timestamp) {
+  const dt = timestamp - lastTime;
+  lastTime = timestamp;
+  update(dt);
+  render();
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+// --- update ---------------------------------------------------------
+function update(dt) {
+  // move player left/right
+  if (state.keys['ArrowLeft'] && state.player.x > 0) {
+    state.player.x -= state.player.speed;
+  }
+  if (state.keys['ArrowRight'] && state.player.x < COLS - state.player.width) {
+    state.player.x += state.player.speed;
+  }
+
+  // fire bullet
+  if (state.keys[' ']) {          // space bar
+    if (!state.fireCooldown || state.fireCooldown <= 0) {
+      fireBullet();
+      state.fireCooldown = 200;   // 200 ms between shots
+    }
+  }
+  if (state.fireCooldown) state.fireCooldown -= dt;
+
+  // update bullets
+  for (let i=state.player.bullets.length-1; i>=0; i--) {
+    const b = state.player.bullets[i];
+    b.y -= 1;
+    // remove if off screen
+    if (b.y < 0) {
+      state.player.bullets.splice(i,1);
+      continue;
+    }
+    // check collision with aliens
+    for (let j=state.aliens.length-1; j>=0; j--) {
+      const a = state.aliens[j];
+      if (!a.alive) continue;
+      if (rectCollide(b, a)) {
+        a.alive = false;
+        state.score += 10;
+        state.player.bullets.splice(i,1);
+        break;
+      }
+    }
+  }
+
+  // move aliens
+  state.alienMoveTimer += dt;
+  if (state.alienMoveTimer > state.alienMoveInterval) {
+    state.alienMoveTimer -= state.alienMoveInterval;
+    moveAliens();
+  }
+
+  // check alien reach bottom
+  for (const a of state.aliens) {
+    if (a.alive && a.y >= state.player.y) {
+      state.lives -= 1;
+      // reset game if lives are gone
+      if (state.lives <= 0) {
+        alert('Game over! Final score: '+state.score);
+        resetGame();
+      }
+      break;
+    }
+  }
+
+  // remove dead aliens
+  state.aliens = state.aliens.filter(a => a.alive);
+  if (state.aliens.length === 0) {
+    // next wave, increase speed
+    state.alienSpeed += 0.05;
+    state.alienMoveInterval = Math.max(200, 800 - state.alienSpeed*200);
+    initAliens();
+  }
+}
+
+// --- render ---------------------------------------------------------
+function render() {
+  // clear
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // draw player
+  drawBlock(state.player, state.player.color);
+
+  // draw bullets
+  for (const b of state.player.bullets) {
+    drawBlock(b, 'white');
+  }
+
+  // draw aliens
+  for (const a of state.aliens) {
+    if (a.alive) drawBlock(a, a.color);
+  }
+
+  // draw HUD
+  ctx.fillStyle = 'white';
+  ctx.font = '18px monospace';
+  ctx.fillText('Score: '+state.score, 10, 20);
+  ctx.fillText('Lives: '+state.lives, 120, 20);
+}
+
+// --- helper functions ----------------------------------------------
+function fireBullet() {
+  const bullet = {
+    x: state.player.x + state.player.width/2,
+    y: state.player.y,
+    width: 0.2,
+    height: 0.5
+  };
+  state.player.bullets.push(bullet);
+}
+
+function moveAliens() {
+  // check if any alien would hit side
+  let hitWall = false;
+  for (const a of state.aliens) {
+    if (!a.alive) continue;
+    const newX = a.x + state.alienMoveDir;
+    if (newX < 0 || newX > COLS - a.width) {
+      hitWall = true;
+      break;
+    }
+  }
+
+  if (hitWall) {
+    state.alienMoveDir *= -1;
+    // move down
+    for (const a of state.aliens) a.y += 1;
+  } else {
+    for (const a of state.aliens) a.x += state.alienMoveDir;
+  }
+}
+
+function rectCollide(a, b) {
+  return a.x < b.x + b.width &&
+         a.x + a.width > b.x &&
+         a.y < b.y + b.height &&
+         a.y + a.height > b.y;
+}
+
+function drawBlock(obj, color) {
+  ctx.fillStyle = color;
+  ctx.fillRect(obj.x*BLOCK_SIZE,
+               obj.y*BLOCK_SIZE,
+               obj.width*BLOCK_SIZE,
+               obj.height*BLOCK_SIZE);
+}
+
+function resetGame() {
+  state.player.x = COLS/2;
+  state.player.bullets = [];
+  state.score = 0;
+  state.lives = 3;
+  state.aliens = [];
+  state.alienMoveDir = 1;
+  state.alienSpeed = 0.2;
+  state.alienMoveInterval = 800;
+  initAliens();
+}
+
+// initialise
+initAliens();
+
+</script>
+</body>
+</html>
